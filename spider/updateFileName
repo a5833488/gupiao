@@ -1,0 +1,45 @@
+import selenium
+from selenium import webdriver
+import pymysql
+import time
+import re
+import os
+import bs4
+import requests
+from shutil import copy
+
+def mysqlTest():
+    db = pymysql.connect("localhost", "root", "Aa5833488123", "city")
+    # 使用 cursor() 方法创建一个游标对象 cursor
+    cursor = db.cursor()
+
+    # 使用 execute()  方法执行 SQL 查询
+    cursor.execute("SELECT  * from travel_area where ma_id is not null")
+
+    # 使用 fetchone() 方法获取单条数据.
+    data = cursor.fetchall()
+
+    return data
+
+def processHtml(area):
+    #创建文件目录和文档
+    desktop_path = 'E:\\travelData\\'+area[1]  # 新创建的txt文件的存放路径
+    desktop_path_num = 'E:\\travelData\\'+str(area[0])
+    isExistsNum=os.path.exists(desktop_path_num)
+    isExists = os.path.exists(desktop_path)
+
+    if not isExistsNum:
+        # 如果不存在则创建目录
+        os.makedirs(desktop_path_num)
+        print(desktop_path_num+'创建成功')
+    if isExists:
+        for filename in os.listdir(desktop_path):
+            copy(desktop_path+'\\'+filename,desktop_path_num+'\\'+filename)
+            print("copy成功")
+
+
+
+if __name__ == '__main__':
+    area_data =   mysqlTest()
+    for area in area_data:
+        processHtml(area)
